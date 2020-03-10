@@ -788,6 +788,9 @@ public class SysUserController {
 		String smscode = jsonObject.getString("smscode");
 		Object code = redisUtil.get(phone);
 		String username = jsonObject.getString("username");
+		//                                             userstatus
+		String userstatus = jsonObject.getString("userstatus");
+       // System.out.println("userstatus111111111111111111111111111111111111111111111111111111111"+userstatus);
 		//未设置用户名，则用手机号作为用户名
 		if(oConvertUtils.isEmpty(username)){
             username = phone;
@@ -841,7 +844,18 @@ public class SysUserController {
 			user.setActivitiSync(CommonConstant.ACT_SYNC_1);
             //sysUserService.addUserWithRole(user,"ee8626f80f7c2619917b6236f3a7f02b");//默认临时角色 test
             //                                     ee8626f80f7c2619917b6236f3a7f02b
-			sysUserService.addUserWithRole(user,"1234366457314926593");//默认临时角色 test
+            if("0".equals(userstatus)){
+                //1237287354120110082
+               // System.out.println("我是个人用户");
+                sysUserService.addUserWithRole(user,"1237287354120110082");
+            }else if("1".equals(userstatus)){
+                //1237287578666369026
+              //  System.out.println("我是企业用户");
+                sysUserService.addUserWithRole(user,"1237287578666369026");
+            }else {
+                System.out.println("我没有选上我是个人还是企业!!!");
+            }
+			//sysUserService.addUserWithRole(user,"1234366457314926593");//默认临时角色 test
 			result.success("注册成功");
 		} catch (Exception e) {
 			result.error500("注册失败");

@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 80019
 File Encoding         : 65001
 
-Date: 2020-03-10 10:43:52
+Date: 2020-03-10 20:16:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -64,6 +64,199 @@ INSERT INTO `demo` VALUES ('c96279c666b4b82e3ef1e4e2978701ce', '报名时间', n
 INSERT INTO `demo` VALUES ('d24668721446e8478eeeafe4db66dcff', 'zhang daihao999', null, null, null, null, '1', null, null, 'zhangdaiscott@163.com', null, null, null, null, null, null);
 INSERT INTO `demo` VALUES ('eaa6c1116b41dc10a94eae34cf990133', 'zhang daihao', null, null, null, null, null, null, null, 'zhangdaiscott@163.com', null, null, null, null, null, null);
 INSERT INTO `demo` VALUES ('ffa9da1ad40632dfcabac51d766865bd', '秦999', null, null, null, null, null, null, null, null, null, 'admin', '2019-01-19 23:36:34', 'admin', '2019-02-14 17:30:43', null);
+
+-- ----------------------------
+-- Table structure for etc_appointment
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_appointment`;
+CREATE TABLE `etc_appointment` (
+  `id` varchar(32) NOT NULL COMMENT '预约ID，系统自动生成',
+  `product_id` int NOT NULL,
+  `full_name` varchar(25) NOT NULL,
+  `phone_number` varchar(11) NOT NULL,
+  `email` varchar(25) NOT NULL,
+  `company_name` varchar(25) NOT NULL,
+  `company_size` int NOT NULL,
+  `post` int NOT NULL,
+  `remarks` varchar(200) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of etc_appointment
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_direction
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_direction`;
+CREATE TABLE `etc_direction` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `DIR_NAME` varchar(15) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_direction
+-- ----------------------------
+INSERT INTO `etc_direction` VALUES ('5', 'java');
+INSERT INTO `etc_direction` VALUES ('6', 'ui');
+
+-- ----------------------------
+-- Table structure for etc_exam_paper
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_exam_paper`;
+CREATE TABLE `etc_exam_paper` (
+  `USER_ID` varchar(30) NOT NULL,
+  `PAPER_ID` int NOT NULL,
+  `QT_ID` int NOT NULL,
+  `USER_ANSWER` text NOT NULL,
+  PRIMARY KEY (`USER_ID`,`PAPER_ID`,`QT_ID`),
+  KEY `FK_E_P` (`PAPER_ID`),
+  KEY `KF_E_Q` (`QT_ID`),
+  CONSTRAINT `FK_E_P` FOREIGN KEY (`PAPER_ID`) REFERENCES `paper` (`ID`),
+  CONSTRAINT `FK_E_U` FOREIGN KEY (`USER_ID`) REFERENCES `sys_user` (`id`),
+  CONSTRAINT `KF_E_Q` FOREIGN KEY (`QT_ID`) REFERENCES `question` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_exam_paper
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_paper
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_paper`;
+CREATE TABLE `etc_paper` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `PAPER_NAME` varchar(50) NOT NULL,
+  `TIME` int NOT NULL,
+  `TOTAL_SCORE` int NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_paper
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_paper_qt
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_paper_qt`;
+CREATE TABLE `etc_paper_qt` (
+  `PAPER_ID` int NOT NULL,
+  `QT_ID` int NOT NULL,
+  `QT_NUM` int DEFAULT NULL,
+  KEY `FK_P_P` (`PAPER_ID`),
+  KEY `FK_P_Q` (`QT_ID`),
+  CONSTRAINT `FK_P_P` FOREIGN KEY (`PAPER_ID`) REFERENCES `paper` (`ID`),
+  CONSTRAINT `FK_P_Q` FOREIGN KEY (`QT_ID`) REFERENCES `question` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_paper_qt
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_product
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_product`;
+CREATE TABLE `etc_product` (
+  `id` int NOT NULL,
+  `name` varchar(25) NOT NULL COMMENT '产品名称',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- ----------------------------
+-- Records of etc_product
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_qt_type
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_qt_type`;
+CREATE TABLE `etc_qt_type` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `QT_TYPE_NAME` varchar(15) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_qt_type
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_question
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_question`;
+CREATE TABLE `etc_question` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `QT_NAME` text NOT NULL,
+  `TYPE_ID` int DEFAULT NULL,
+  `DIFF` int NOT NULL,
+  `QT_SCORE` int NOT NULL,
+  `DIR_ID` int DEFAULT NULL,
+  `SUB_ID` int DEFAULT NULL,
+  `OPTA` varchar(50) DEFAULT NULL,
+  `OPTB` varchar(50) DEFAULT NULL,
+  `OPTC` varchar(50) DEFAULT NULL,
+  `OPTD` varchar(50) DEFAULT NULL,
+  `OPTE` varchar(50) DEFAULT NULL,
+  `OPTF` varchar(50) DEFAULT NULL,
+  `OPTG` varchar(50) DEFAULT NULL,
+  `ANSWER` text,
+  `MARK` int DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `FK_Q_Q` (`TYPE_ID`),
+  KEY `FK_Q_D` (`DIR_ID`),
+  KEY `FK_Q_S` (`SUB_ID`),
+  CONSTRAINT `FK_Q_D` FOREIGN KEY (`DIR_ID`) REFERENCES `direction` (`ID`),
+  CONSTRAINT `FK_Q_Q` FOREIGN KEY (`TYPE_ID`) REFERENCES `qt_type` (`ID`),
+  CONSTRAINT `FK_Q_S` FOREIGN KEY (`SUB_ID`) REFERENCES `subject` (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_question
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_result
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_result`;
+CREATE TABLE `etc_result` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `USER_ID` varchar(30) NOT NULL,
+  `PAPER_ID` int NOT NULL,
+  `OBJ_RESULT` int DEFAULT NULL,
+  `SUB_RESULT` int DEFAULT NULL,
+  `TOTAL_RESULT` int DEFAULT NULL,
+  `STATUS` int DEFAULT '0' COMMENT '考生成绩状态：初始为0；客观题阅卷完成为1；主观题及总成绩完成为2；',
+  PRIMARY KEY (`ID`),
+  KEY `KF_R_U` (`USER_ID`),
+  KEY `KF_R_P` (`PAPER_ID`),
+  CONSTRAINT `KF_R_P` FOREIGN KEY (`PAPER_ID`) REFERENCES `paper` (`ID`),
+  CONSTRAINT `KF_R_U` FOREIGN KEY (`USER_ID`) REFERENCES `sys_user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_result
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for etc_subject
+-- ----------------------------
+DROP TABLE IF EXISTS `etc_subject`;
+CREATE TABLE `etc_subject` (
+  `ID` int NOT NULL AUTO_INCREMENT,
+  `SUB_NAME` varchar(15) NOT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of etc_subject
+-- ----------------------------
+INSERT INTO `etc_subject` VALUES ('1', 'IT');
+INSERT INTO `etc_subject` VALUES ('2', 'English');
 
 -- ----------------------------
 -- Table structure for jeecg_monthly_growth_analysis
@@ -2929,6 +3122,19 @@ INSERT INTO `sys_log` VALUES ('1236631093141643266', '2', '填值规则-分页�
 INSERT INTO `sys_log` VALUES ('1236631110967435265', '2', '多数据源管理-分页列表查询', '1', 'admin', '管理员', '127.0.0.1', 'org.jeecg.modules.system.controller.SysDataSourceController.queryPageList()', null, null, null, '88', 'admin', '2020-03-08 20:33:27', null, null);
 INSERT INTO `sys_log` VALUES ('1236631120140378113', '2', '编码校验规则-分页列表查询', '1', 'admin', '管理员', '127.0.0.1', 'org.jeecg.modules.system.controller.SysCheckRuleController.queryPageList()', null, null, null, '58', 'admin', '2020-03-08 20:33:29', null, null);
 INSERT INTO `sys_log` VALUES ('1236631845041938433', '2', '编码校验规则-分页列表查询', '1', 'admin', '管理员', '127.0.0.1', 'org.jeecg.modules.system.controller.SysCheckRuleController.queryPageList()', null, null, null, '22', 'admin', '2020-03-08 20:36:22', null, null);
+INSERT INTO `sys_log` VALUES ('1237286775004168193', '1', '用户名: 管理员,退出成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 15:58:49', null, null);
+INSERT INTO `sys_log` VALUES ('1237286920479408130', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 15:59:24', null, null);
+INSERT INTO `sys_log` VALUES ('1237287862910156801', '2', '职务表-分页列表查询', '1', 'admin', '管理员', '127.0.0.1', 'org.jeecg.modules.system.controller.SysPositionController.queryPageList()', null, null, null, '85', 'admin', '2020-03-10 16:03:09', null, null);
+INSERT INTO `sys_log` VALUES ('1237287893851537409', '2', '编辑用户，id： ea6836cf96504d53bac87c025b86207c', '2', 'admin', '管理员', '127.0.0.1', null, null, null, null, null, 'admin', '2020-03-10 16:03:16', null, null);
+INSERT INTO `sys_log` VALUES ('1237287953838473217', '1', '用户名: 管理员,退出成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 16:03:31', null, null);
+INSERT INTO `sys_log` VALUES ('1237330562703278081', '1', '用户名: admin,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 18:52:49', null, null);
+INSERT INTO `sys_log` VALUES ('1237330711915642881', '2', '职务表-分页列表查询', '1', 'admin', '管理员', '127.0.0.1', 'org.jeecg.modules.system.controller.SysPositionController.queryPageList()', null, null, null, '43', 'admin', '2020-03-10 18:53:25', null, null);
+INSERT INTO `sys_log` VALUES ('1237332870958792706', '2', '职务表-分页列表查询', '1', 'admin', '管理员', '127.0.0.1', 'org.jeecg.modules.system.controller.SysPositionController.queryPageList()', null, null, null, '20', 'admin', '2020-03-10 19:02:00', null, null);
+INSERT INTO `sys_log` VALUES ('1237333152262373377', '2', '职务表-分页列表查询', '1', 'admin', '管理员', '127.0.0.1', 'org.jeecg.modules.system.controller.SysPositionController.queryPageList()', null, null, null, '68', 'admin', '2020-03-10 19:03:07', null, null);
+INSERT INTO `sys_log` VALUES ('1237337101296058369', '1', '用户名: 管理员,退出成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 19:18:48', null, null);
+INSERT INTO `sys_log` VALUES ('1237350603670765569', '1', '用户名: hanmeimei,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 20:12:27', null, null);
+INSERT INTO `sys_log` VALUES ('1237350715188920322', '1', '用户名: hanmeimei,退出成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 20:12:54', null, null);
+INSERT INTO `sys_log` VALUES ('1237351007074729986', '1', '用户名: tom,登录成功！', null, null, null, '127.0.0.1', null, null, null, null, null, null, '2020-03-10 20:14:04', null, null);
 
 -- ----------------------------
 -- Table structure for sys_permission
@@ -3205,6 +3411,8 @@ CREATE TABLE `sys_role` (
 -- Records of sys_role
 -- ----------------------------
 INSERT INTO `sys_role` VALUES ('1234366457314926593', '哈尔滨etc', 'etc', 'etc测试人员', 'admin', '2020-03-02 14:34:32', null, null);
+INSERT INTO `sys_role` VALUES ('1237287354120110082', '个人用户', 'personalUser', '个人用户', 'admin', '2020-03-10 16:01:08', null, null);
+INSERT INTO `sys_role` VALUES ('1237287578666369026', '企业用户', 'enterpriseUser', '企业用户', 'admin', '2020-03-10 16:02:01', null, null);
 INSERT INTO `sys_role` VALUES ('e51758fa916c881624b046d26bd09230', '人力资源部', 'hr', null, 'admin', '2019-01-21 18:07:24', 'admin', '2019-10-18 11:39:43');
 INSERT INTO `sys_role` VALUES ('ee8626f80f7c2619917b6236f3a7f02b', '临时角色', 'test', '这是新建的临时角色123', null, '2018-12-20 10:59:04', 'admin', '2019-02-19 15:08:37');
 INSERT INTO `sys_role` VALUES ('f6817f48af4fb3af11b9e8bf182f618b', '管理员', 'admin', '管理员', null, '2018-12-21 18:03:39', 'admin', '2019-05-20 11:40:26');
@@ -3265,6 +3473,10 @@ INSERT INTO `sys_role_permission` VALUES ('1234370730052411393', '12343664573149
 INSERT INTO `sys_role_permission` VALUES ('1234370730056605697', '1234366457314926593', '4f66409ef3bbd69c1d80469d6e2a885e', null);
 INSERT INTO `sys_role_permission` VALUES ('1234370730060800002', '1234366457314926593', 'fedfbf4420536cacc0218557d263dfea', null);
 INSERT INTO `sys_role_permission` VALUES ('1235914099803086850', 'f6817f48af4fb3af11b9e8bf182f618b', '1235913577842925570', null);
+INSERT INTO `sys_role_permission` VALUES ('1237287656902721538', '1237287578666369026', '9502685863ab87f0ad1134142788a385', null);
+INSERT INTO `sys_role_permission` VALUES ('1237287716554113026', '1237287578666369026', '1235913577842925570', null);
+INSERT INTO `sys_role_permission` VALUES ('1237287777430241282', '1237287354120110082', '1234109133249589249', null);
+INSERT INTO `sys_role_permission` VALUES ('1237287777430241283', '1237287354120110082', '1234113482528927746', null);
 INSERT INTO `sys_role_permission` VALUES ('126ea9faebeec2b914d6d9bef957afb6', 'f6817f48af4fb3af11b9e8bf182f618b', 'f1cb187abf927c88b89470d08615f5ac', null);
 INSERT INTO `sys_role_permission` VALUES ('145eac8dd88eddbd4ce0a800ab40a92c', 'e51758fa916c881624b046d26bd09230', '08e6b9dc3c04489c8e1ff2ce6f105aa4', null);
 INSERT INTO `sys_role_permission` VALUES ('154edd0599bd1dc2c7de220b489cd1e2', 'f6817f48af4fb3af11b9e8bf182f618b', '7ac9eb9ccbde2f7a033cd4944272bf1e', null);
@@ -3700,11 +3912,12 @@ CREATE TABLE `sys_user` (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES ('1234728425712357377', 'hanmeimei', 'hanmeimei', 'f6d07fcec155faef5a3209806a5c43ba', 'NI9vkwmp', null, null, null, 'hanmeimei@163.com', null, null, '1', '0', '1', null, null, null, null, '2020-03-03 14:32:51', null, null, null, null);
+INSERT INTO `sys_user` VALUES ('1237349483539939329', 'hanmeimei', 'hanmeimei', '53db4f9542e61f872fedbf799187ab66', 'KLy9jOTQ', null, null, null, 'hanmeimei@163.com', null, null, '1', '0', '1', null, null, null, null, '2020-03-10 20:08:00', null, null, null, null);
+INSERT INTO `sys_user` VALUES ('1237350945850474497', 'tom', 'tom', '633d80b977ab1323', 'RQlJL0sh', null, null, null, 'tom@163.com', null, null, '1', '0', '1', null, null, null, null, '2020-03-10 20:13:49', null, null, null, null);
 INSERT INTO `sys_user` VALUES ('42d153bffeea74f72a9c1697874fa4a7', 'test22', '23232', 'ac52e15671a377cf', '5FMD48RM', 'user/20190314/ly-plate-e_1552531617500.png', '2019-02-09 00:00:00', '1', 'zhangdaiscott@163.com', '18611782222', null, '1', '0', '1', null, null, null, 'admin', '2019-01-26 18:01:10', 'admin', '2019-03-23 15:05:50', null, null);
 INSERT INTO `sys_user` VALUES ('a75d45a015c44384a04449ee80dc3503', 'jeecg', 'jeecg', '3dd8371f3cf8240e', 'vDDkDzrK', 'user/20190220/e1fe9925bc315c60addea1b98eb1cb1349547719_1550656892940.jpg', null, '2', null, null, 'A02A01', '1', '0', '1', null, null, null, 'admin', '2019-02-13 16:02:36', 'admin', '2019-04-09 15:47:36', null, null);
 INSERT INTO `sys_user` VALUES ('e9ca23d68d884d4ebb19d07889727dae', 'admin', '管理员', 'cb362cfeefbf3d8d', 'RCGTeGiH', 'temp/11_1582468686154.jpg', '2018-12-05 00:00:00', '1', '11@qq.com', '18566666661', 'A01', '1', '0', '1', '111', '', null, null, '2038-06-21 17:54:10', 'admin', '2020-02-23 22:44:00', '2', 'c6d7cb4deeac411cb3384b1b31278596');
-INSERT INTO `sys_user` VALUES ('ea6836cf96504d53bac87c025b86207c', 'lilei', '李雷', '353db23c17364fa6', 'JuPrApug', 'temp/lilei_1583131243086.JPG', '1998-03-02 00:00:00', '1', null, null, 'A03', '1', '0', '1', '100010', '', null, 'admin', '2020-03-01 08:51:20', 'admin', '2020-03-02 15:34:20', '1', '');
+INSERT INTO `sys_user` VALUES ('ea6836cf96504d53bac87c025b86207c', 'lilei', '李雷', '353db23c17364fa6', 'JuPrApug', 'temp/lilei_1583131243086.JPG', '1998-03-02 00:00:00', '1', null, null, '中软国际', '1', '0', '1', '100010', '', null, 'admin', '2020-03-01 08:51:20', 'admin', '2020-03-10 16:03:16', '1', '');
 INSERT INTO `sys_user` VALUES ('f0019fdebedb443c98dcb17d88222c38', 'zhagnxiao', '张小红', 'f898134e5e52ae11a2ffb2c3b57a4e90', 'go3jJ4zX', 'user/20190401/20180607175028Fn1Lq7zw_1554118444672.png', '2019-04-01 00:00:00', null, null, null, null, '1', '0', '1', null, null, null, 'admin', '2023-10-01 19:34:10', 'admin', '2019-04-10 22:00:22', null, null);
 
 -- ----------------------------
@@ -3758,7 +3971,7 @@ INSERT INTO `sys_user_depart` VALUES ('0c42ba309c2c4cad35836ec2336676fa', '42d15
 INSERT INTO `sys_user_depart` VALUES ('2835834d133f9118ee87a666e0f5501e', 'a75d45a015c44384a04449ee80dc3503', 'a7d7e77e06c84325a40932163adcdaa6');
 INSERT INTO `sys_user_depart` VALUES ('1f3a0267811327b9eca86b0cc2b956f3', 'bcbe1290783a469a83ae3bd8effe15d4', '5159cde220114246b045e574adceafe9');
 INSERT INTO `sys_user_depart` VALUES ('1231590533597499393', 'e9ca23d68d884d4ebb19d07889727dae', 'c6d7cb4deeac411cb3384b1b31278596');
-INSERT INTO `sys_user_depart` VALUES ('1234381508549664769', 'ea6836cf96504d53bac87c025b86207c', '654a8f1144d04b4e8771b32aee83f4b6');
+INSERT INTO `sys_user_depart` VALUES ('1237287894174498817', 'ea6836cf96504d53bac87c025b86207c', '654a8f1144d04b4e8771b32aee83f4b6');
 INSERT INTO `sys_user_depart` VALUES ('ac52f23ae625eb6560c9227170b88166', 'f0019fdebedb443c98dcb17d88222c38', '57197590443c44f083d42ae24ef26a2c');
 INSERT INTO `sys_user_depart` VALUES ('179660a8b9a122f66b73603799a10924', 'f0019fdebedb443c98dcb17d88222c38', '67fc001af12a4f9b8458005d3f19934a');
 
@@ -3782,6 +3995,25 @@ CREATE TABLE `sys_user_role` (
 INSERT INTO `sys_user_role` VALUES ('b3ffd9311a1ca296c44e2409b547384f', '01b802058ea94b978a2c96f4807f6b48', '1');
 INSERT INTO `sys_user_role` VALUES ('1234724660837982210', '1234724660737318913', 'ee8626f80f7c2619917b6236f3a7f02b');
 INSERT INTO `sys_user_role` VALUES ('1234728425737523202', '1234728425712357377', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237295521717649409', '1237295521692483585', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237297243563347970', '1237297243513016322', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237297746456190978', '1237297746397470721', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237299117813252097', '1237299117746143233', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237324009875030018', '1237324009845669889', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237325826935603202', '1237325826927214594', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237337997300019202', '1237337997241298945', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237338662093008897', '1237338662067843074', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237338992490917890', '1237338992482529281', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237339405516615681', '1237339405495644161', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237340716865761281', '1237340716840595457', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237341083166912513', '1237341083150135297', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237343605453565953', '1237343605432594434', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237344194203824129', '1237344194182852609', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237345296433360897', '1237345296412389377', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237347006086197249', '1237347006061031426', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237348273235787777', '1237348273189650434', '1237287578666369026');
+INSERT INTO `sys_user_role` VALUES ('1237349483581882370', '1237349483539939329', '1237287578666369026');
+INSERT INTO `sys_user_role` VALUES ('1237350945892417538', '1237350945850474497', '1237287354120110082');
 INSERT INTO `sys_user_role` VALUES ('0ede6d23d53bc7dc990346ff14faabee', '3db4cf42353f4e868b7ccfeef90505d2', 'ee8626f80f7c2619917b6236f3a7f02b');
 INSERT INTO `sys_user_role` VALUES ('e78d210d24aaff48e0a736e2ddff4cdc', '3e177fede453430387a8279ced685679', 'ee8626f80f7c2619917b6236f3a7f02b');
 INSERT INTO `sys_user_role` VALUES ('f2de3ae7b5efd8345581aa802a6675d6', '41b1be8d4c52023b0798f51164ca682d', 'e51758fa916c881624b046d26bd09230');
@@ -3796,7 +4028,7 @@ INSERT INTO `sys_user_role` VALUES ('79d66ef7aa137cfa9957081a1483009d', '9a66885
 INSERT INTO `sys_user_role` VALUES ('f3a4ca33848daba3e43490707ae859e7', 'a75d45a015c44384a04449ee80dc3503', 'e51758fa916c881624b046d26bd09230');
 INSERT INTO `sys_user_role` VALUES ('fe38580871c5061ba59d5c03a0840b0e', 'a75d45a015c44384a04449ee80dc3503', 'ee8626f80f7c2619917b6236f3a7f02b');
 INSERT INTO `sys_user_role` VALUES ('1231590533484253186', 'e9ca23d68d884d4ebb19d07889727dae', 'f6817f48af4fb3af11b9e8bf182f618b');
-INSERT INTO `sys_user_role` VALUES ('1234381508428029953', 'ea6836cf96504d53bac87c025b86207c', '1234366457314926593');
+INSERT INTO `sys_user_role` VALUES ('1237287894036086786', 'ea6836cf96504d53bac87c025b86207c', '1237287354120110082');
 INSERT INTO `sys_user_role` VALUES ('d2233e5be091d39da5abb0073c766224', 'f0019fdebedb443c98dcb17d88222c38', 'ee8626f80f7c2619917b6236f3a7f02b');
 
 -- ----------------------------
