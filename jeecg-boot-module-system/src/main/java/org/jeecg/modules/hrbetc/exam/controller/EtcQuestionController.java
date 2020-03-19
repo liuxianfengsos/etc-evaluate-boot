@@ -1,5 +1,6 @@
 package org.jeecg.modules.hrbetc.exam.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,46 @@ import org.jeecg.common.aspect.annotation.AutoLog;
 public class EtcQuestionController extends JeecgController<EtcQuestion, IEtcQuestionService> {
 	@Autowired
 	private IEtcQuestionService etcQuestionService;
-	
+	private List<EtcQuestion> list = new ArrayList<>();
+	 @AutoLog(value = "etc_question-分页列表查询")
+	 @ApiOperation(value="etc_question-分页列表查询", notes="etc_question-分页列表查询")
+	 @GetMapping(value = "/list4exam")
+	 public Result<?> queryPageList4Exam(EtcQuestion etcQuestion,
+									@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+									HttpServletRequest req) {
+		 QueryWrapper<EtcQuestion> queryWrapper = QueryGenerator.initQueryWrapper(etcQuestion, req.getParameterMap());
+		 Page<EtcQuestion> page = new Page<EtcQuestion>(pageNo, pageSize);
+		 IPage<EtcQuestion> pageList = etcQuestionService.page(page, queryWrapper);
+		 //List<EtcQuestion> pageList = etcQuestionService.list();
+		 Integer index = 1;
+		 for(EtcQuestion e:pageList.getRecords()){
+		// for(EtcQuestion e:pageList){
+			 EtcQuestion etcq = new EtcQuestion();
+			 String id = e.getId();
+			String qtName = e.getQtName();
+			String opta = e.getOpta();
+			 String optb = e.getOptb();
+			 String optc = e.getOptc();
+			 String optd = e.getOptd();
+
+			 etcq.setId(id);
+			 etcq.setQtName(qtName);
+			 etcq.setOpta(opta);
+			 etcq.setOptb(optb);
+			 etcq.setOptc(optc);
+			 etcq.setOptd(optd);
+			 etcq.setMark(Integer.toString(index));
+			 etcq.setAnswer(null);
+			 index++;
+			 list.add(etcq);
+		 }
+		// list.stream().forEach(System.out::println);
+		 return Result.ok(list);
+		 //return Result.ok(pageList);
+	 }
+
+
 	/**
 	 * 分页列表查询
 	 *
@@ -60,17 +100,17 @@ public class EtcQuestionController extends JeecgController<EtcQuestion, IEtcQues
 	 * @return
 	 */
 	@AutoLog(value = "etc_question-分页列表查询")
-	@ApiOperation(value="etc_question-分页列表查询", notes="etc_question-分页列表查询")
-	@GetMapping(value = "/list")
-	public Result<?> queryPageList(EtcQuestion etcQuestion,
-								   @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
-								   @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
-								   HttpServletRequest req) {
-		QueryWrapper<EtcQuestion> queryWrapper = QueryGenerator.initQueryWrapper(etcQuestion, req.getParameterMap());
-		Page<EtcQuestion> page = new Page<EtcQuestion>(pageNo, pageSize);
-		IPage<EtcQuestion> pageList = etcQuestionService.page(page, queryWrapper);
-		return Result.ok(pageList);
-	}
+	 @ApiOperation(value="etc_question-分页列表查询", notes="etc_question-分页列表查询")
+	 @GetMapping(value = "/list")
+	 public Result<?> queryPageList(EtcQuestion etcQuestion,
+									@RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+									@RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+									HttpServletRequest req) {
+		 QueryWrapper<EtcQuestion> queryWrapper = QueryGenerator.initQueryWrapper(etcQuestion, req.getParameterMap());
+		 Page<EtcQuestion> page = new Page<EtcQuestion>(pageNo, pageSize);
+		 IPage<EtcQuestion> pageList = etcQuestionService.page(page, queryWrapper);
+		 return Result.ok(pageList);
+	 }
 	
 	/**
 	 *   添加
