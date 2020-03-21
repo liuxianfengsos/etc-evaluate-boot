@@ -23,6 +23,7 @@ import lombok.experimental.Accessors;
  * @Date:   2020-03-11
  * @Version: V1.0
  */
+
 @Data
 @TableName("etc_question")
 @Accessors(chain = true)
@@ -30,7 +31,9 @@ import lombok.experimental.Accessors;
 @ApiModel(value="etc_question对象", description="etc_question")
 public class EtcQuestion implements Serializable {
     private static final long serialVersionUID = 1L;
+	public EtcQuestion(){
 
+	}
 	/**主键*/
 	@TableId(type = IdType.ID_WORKER_STR)
     @ApiModelProperty(value = "主键")
